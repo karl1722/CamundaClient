@@ -39,14 +39,21 @@ public class RestClient {
     }
 
         public void jiraTicketTransition(String issueType, String issueKey, String newStatus) throws IOException {
-        HttpURLConnection connection = connect("process-definition/ProcessMessage/start");
+        //Note - camunda process key hardcoded here
+        HttpURLConnection connection = connect("process-definition/key/ProcessMessage/start");
         connection.setRequestMethod("POST");
 
         JsonObject jsonBody = Json.createObjectBuilder()
                 .add("variables",
-                        Json.createObjectBuilder().add("issueKey",issueKey)
-                                .add("newStatus", newStatus)
-                                .add("issueType", issueType)
+                        Json.createObjectBuilder().add("issueKey",
+                                Json.createObjectBuilder().add("value", issueKey)
+                                .add("type", "String"))
+                        .add("issueType",
+                                Json.createObjectBuilder().add("value", issueType)
+                                        .add("type", "String"))
+                        .add("newStatus",
+                                Json.createObjectBuilder().add("value", newStatus)
+                                        .add("type", "String"))
                 ).build();
 
         String encodedData = jsonBody.toString();
